@@ -20,6 +20,8 @@ module PuppetMetadata
 
   # An abstraction over Puppet metadata
   class Metadata
+    SUPPORTED_REQUIREMENTS = ['openvox', 'puppet']
+
     attr_reader :metadata
 
     # @param [Hash[String, Any]] metadata
@@ -137,12 +139,13 @@ module PuppetMetadata
       matches?(requirements[name], version)
     end
 
-    def puppet_major_versions
-      major_versions('puppet')
-    end
+    def requirements_with_major_versions
+      SUPPORTED_REQUIREMENTS.to_h do |requirement|
+        majors = major_versions(requirement)
+        next if majors.empty?
 
-    def openvox_major_versions
-      major_versions('openvox')
+        [requirement, majors]
+      end
     end
 
     # @return [Array[Integer]] Supported major Puppet versions
